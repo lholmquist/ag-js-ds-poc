@@ -116,7 +116,7 @@ var app = {
 
         this.ENTER_KEY = 13;
 
-        this.ag.syncer = AeroGear.DataSync({ syncServerUrl: 'http://localhost:8080' });
+        this.ag.syncer = AeroGear.DataSync({ syncServerUrl: 'http://localhost:5984/cool' });
         app.initData();
 
         this.content = $( "div .detail" );
@@ -186,4 +186,33 @@ var app = {
     }
 };
 
-app.init();
+//app.init();
+
+
+var sync = AeroGear.DataSync();
+
+sync.add({ name: "cool", settings: { syncServerUrl: "http://localhost:5984/" } });
+
+var fetchThing = sync.syncers.cool.fetch("66c635e2cd12a8057131f763ce0003eb");
+
+var da;
+
+function update( data ) {
+    sync.syncers.cool.save( data )
+        .then( function( response ) {
+            console.log( response );
+        }, function( error ) {
+            console.log( "error" );
+            console.log( error );
+        });
+}
+
+fetchThing.then( function( data ) {
+    console.log( data );
+
+    da = data;
+    update( data );
+    //data._id = '1234567890';
+});
+
+
